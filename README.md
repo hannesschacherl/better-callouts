@@ -1,5 +1,7 @@
 # Better Callouts Documentation
 
+Docs also available on [Better Callouts Documentation](https://bettercallouts.schacherl.me).
+
 `Better Callouts` is an Obsidian plugin that lets you create, edit, and manage custom callout styles visually — no CSS knowledge needed. It handles everything for you, including automatic snippet generation.
 
 
