@@ -21,12 +21,9 @@ jobs:
           tar -xzf gh.tar.gz
           sudo mv gh_${GH_CLI_VERSION}_linux_amd64/bin/gh /usr/local/bin/
 
-      - name: Authenticate GitHub CLI
+      - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "${GITHUB_TOKEN}" | gh auth login --with-token
-
-      - name: Create release
         run: |
           tag="${GITHUB_REF#refs/tags/}"
           gh release create "$tag" \
