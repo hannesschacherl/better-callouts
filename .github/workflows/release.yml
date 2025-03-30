@@ -13,6 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: List files
+        run: ls -al
+
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -23,4 +27,5 @@ jobs:
             --title="$tag" \
             --draft \
             --notes "" \
-            main.js manifest.json
+            ./main.js ./manifest.json
+
