@@ -10,7 +10,6 @@ Docs also available on [Better Callouts Documentation](https://bettercallouts.sc
 - 🧠 Custom color, text color, and optional border for the callouts
 - 💾 Generates valid Obsidian CSS snippets
 - 🔄 Automatically keeps `.obsidian/snippets/betterCallouts.css` up to date
-- ⚡ Templater integration for easy inserting custom callouts in notes
 
 ---
 
