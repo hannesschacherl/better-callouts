@@ -13,19 +13,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: List files
+      - name: List files (debug)
         run: ls -al
 
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt-get update
+          sudo apt-get install gh -y
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF#refs/tags/}"
-
-            gh release create "$tag" \
+          gh release create "$tag" \
             --title="$tag" \
             --draft \
-            --notes "" \
+            --notes "Release $tag of Better Callouts" \
             ./main.js ./manifest.json
-
