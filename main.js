@@ -151,7 +151,6 @@ class ColorCalloutSettingTab extends a.PluginSettingTab {
             text.inputEl.style.color = s.textColor || "#000000";
             text.inputEl.addClass("callout-input");
       
-            // ✅ minimalistisches Input-Feld
             text.inputEl.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
             text.inputEl.style.backdropFilter = "blur(1px)";
             text.inputEl.style.border = "none";
@@ -256,9 +255,11 @@ class ColorCalloutSettingTab extends a.PluginSettingTab {
         text.inputEl.style.marginLeft = "2px";
         text.inputEl.disabled = !s.hasBorder;
         text.inputEl.style.opacity = text.inputEl.disabled ? "0.5" : "1";
+        text.inputEl.style.border = "none";
         text.inputEl.style.borderBottom = "2px solid rgba(0, 0, 0, 0.3)";
         text.inputEl.style.borderRadius = "4px";
-
+        text.inputEl.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+        text.inputEl.style.backdropFilter = "blur(1px)";
         text.onChange(async (val) => {
           const updated = [...this.plugin.settings.colors];
           updated[i] = { ...updated[i], borderColor: val };
