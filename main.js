@@ -146,17 +146,37 @@ class ColorCalloutSettingTab extends a.PluginSettingTab {
             text.onChange(async (v) => {
               await onChange(String(v));
             });
+      
             text.inputEl.style.width = "250px";
             text.inputEl.style.color = s.textColor || "#000000";
             text.inputEl.addClass("callout-input");
+      
+            // ✅ minimalistisches Input-Feld
+            text.inputEl.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+            text.inputEl.style.backdropFilter = "blur(1px)";
+            text.inputEl.style.border = "none";
+            text.inputEl.style.borderBottom = "2px solid rgba(0, 0, 0, 0.3)";
+            text.inputEl.style.borderRadius = "4px";
+            text.inputEl.style.padding = "4px 6px";
+            text.inputEl.style.outline = "none";
+            text.inputEl.style.transition = "border-color 0.2s ease, background-color 0.2s ease";
+      
+            // Focus-Effekt für Unterstrich
+            text.inputEl.addEventListener("focus", () => {
+              text.inputEl.style.borderBottom = "2px solid var(--color-accent)";
+            });
+            text.inputEl.addEventListener("blur", () => {
+              text.inputEl.style.borderBottom = "2px solid rgba(0, 0, 0, 0.3)";
+            });
           });
-
+      
         setting.settingEl.style.border = "none";
         setting.settingEl.style.padding = "2px";
         setting.settingEl.style.margin = "0";
         setting.nameEl.style.opacity = "0.8";
         setting.nameEl.style.color = s.textColor || "#000000";
       };
+      
 
       makeField("Label", s.label, async (val) => {
         const updated = [...this.plugin.settings.colors];
@@ -204,39 +224,68 @@ class ColorCalloutSettingTab extends a.PluginSettingTab {
         await this.plugin.saveSettings();
       });
 
-      const borderToggle = new a.Setting(content)
-        .setName("Has Border?")
-        .addToggle((toggle) => {
-          toggle.setValue(s.hasBorder || false).onChange(async (val) => {
-            const updated = [...this.plugin.settings.colors];
-            updated[i] = {
-              ...updated[i],
-              hasBorder: val,
-              value:
-                (val ? "cb-" : "c-") +
-                updated[i].label.toLowerCase().replace(/\s+/g, "-"),
-            };
-            this.plugin.settings.colors = updated;
-            await this.plugin.saveSettings();
-            this.display();
-          });
+      // --- Border Toggle and Input Combined ---
+      const borderSetting = new a.Setting(content)
+        .setName("Border")
+        .setClass("callout-border-setting");
+
+      let borderColorInput;
+
+      borderSetting.addToggle((toggle) => {
+        toggle.setValue(s.hasBorder || false);
+        toggle.onChange(async (val) => {
+          const updated = [...this.plugin.settings.colors];
+          updated[i] = {
+            ...updated[i],
+            hasBorder: val,
+            value:
+              (val ? "cb-" : "c-") +
+              updated[i].label.toLowerCase().replace(/\s+/g, "-"),
+          };
+          this.plugin.settings.colors = updated;
+          await this.plugin.saveSettings();
+          this.display();
         });
+      });
 
-      borderToggle.settingEl.style.border = "none";
-      borderToggle.settingEl.style.padding = "2px";
-      borderToggle.settingEl.style.margin = "0";
-      borderToggle.nameEl.style.opacity = "0.8";
-      borderToggle.nameEl.style.color = s.textColor || "#000000";
+      borderSetting.addText((text) => {
+        borderColorInput = text;
+        text.setPlaceholder("#000000");
+        text.setValue(s.borderColor || "#000000");
+        text.inputEl.style.width = "200px";
+        text.inputEl.style.marginLeft = "2px";
+        text.inputEl.disabled = !s.hasBorder;
+        text.inputEl.style.opacity = text.inputEl.disabled ? "0.5" : "1";
+        text.inputEl.style.borderBottom = "2px solid rgba(0, 0, 0, 0.3)";
+        text.inputEl.style.borderRadius = "4px";
 
-      if (s.hasBorder) {
-        makeField("Border", s.borderColor || "#000000", async (val) => {
+        text.onChange(async (val) => {
           const updated = [...this.plugin.settings.colors];
           updated[i] = { ...updated[i], borderColor: val };
           this.plugin.settings.colors = updated;
           callout.style.setProperty("--callout-border", val);
           await this.plugin.saveSettings();
         });
-      }
+      });
+
+      borderSetting.settingEl.style.display = "flex";
+      borderSetting.settingEl.style.alignItems = "center";
+      borderSetting.settingEl.style.gap = "8px";
+      borderSetting.settingEl.style.margin = "0";
+      borderSetting.settingEl.style.padding = "2px";
+      borderSetting.nameEl.style.opacity = "0.8";
+      borderSetting.nameEl.style.color = s.textColor || "#000000";
+      borderSetting.settingEl.style.borderTop = "none";
+      borderSetting.settingEl.style.marginTop = "0";
+
+
+      borderSetting.components[0].toggleEl.onchange = () => {
+        const enabled = borderSetting.components[0].toggleEl.checked;
+        if (borderColorInput) {
+          borderColorInput.inputEl.disabled = !enabled;
+          borderColorInput.inputEl.style.opacity = enabled ? "1" : "0.5";
+        }
+      };
     });
 
     Sortable.create(grid, {
