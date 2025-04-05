@@ -377,6 +377,15 @@ module.exports = class ColorCalloutPickerPlugin extends a.Plugin {
         modal.open();
       },
     });
+    this.addCommand({
+      id: "manage-callouts",
+      name: "Manage Callouts",
+      callback: () => {
+        this.app.setting.open();
+        this.app.setting.openTabById(this.manifest.id);
+      }
+    });
+    
   
     this.addSettingTab(new ColorCalloutSettingTab(this.app, this));
     await this.generateCalloutCSSFile();
