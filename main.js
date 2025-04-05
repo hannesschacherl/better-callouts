@@ -323,9 +323,44 @@ class ColorCalloutSettingTab extends a.PluginSettingTab {
 
 module.exports = class ColorCalloutPickerPlugin extends a.Plugin {
   async onload() {
-    const defaultSettings = { colors: [] };
-    this.settings = Object.assign({}, defaultSettings, await this.loadData());
-
+    const defaultSettings = {
+      colors: [
+        {
+          label: "Clean",
+          value: "c-clean",
+          color: "var(--color-base-30)",
+          textColor: "var(--text-normal)",
+          hasBorder: false,
+          borderColor: "#000000"
+        },
+        {
+          label: "Primary",
+          value: "cb-primary",
+          color: "rgba(53, 212, 178, 0.1)",
+          textColor: "#000000",
+          hasBorder: true,
+          borderColor: "rgba(53, 212, 178, 1)"
+        },
+        {
+          label: "Accent",
+          value: "c-accent",
+          color: "hsl(45, 100%, 85%)",
+          textColor: "#222222",
+          hasBorder: false,
+          borderColor: ""
+        }
+      ]
+    };
+  
+    const loaded = await this.loadData();
+    const isFirstLoad = !loaded || !Array.isArray(loaded.colors) || loaded.colors.length === 0;
+    this.settings = Object.assign({}, defaultSettings, loaded);
+  
+    if (isFirstLoad) {
+      this.settings.colors = defaultSettings.colors;
+      await this.saveSettings();
+    }
+  
     this.addCommand({
       id: "insert-better-callout",
       name: "Insert Better Callout",
@@ -342,10 +377,11 @@ module.exports = class ColorCalloutPickerPlugin extends a.Plugin {
         modal.open();
       },
     });
-
+  
     this.addSettingTab(new ColorCalloutSettingTab(this.app, this));
     await this.generateCalloutCSSFile();
   }
+  
 
   async generateCalloutCSSFile() {
     const baseCSS = `/* 🤖 WARNING */
